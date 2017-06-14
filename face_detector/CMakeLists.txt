@@ -53,7 +53,7 @@ target_link_libraries(${PROJECT_NAME}
   ${OpenCV_LIBRARIES})
 
 add_dependencies(face_detector ${PROJECT_NAME}_generate_messages_cpp)
-
+set_target_properties(face_detector PROPERTIES COMPILE_OPTIONS "-std=c++11")
 
 install(TARGETS
   face_detector

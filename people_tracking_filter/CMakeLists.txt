@@ -67,6 +67,10 @@ target_link_libraries(people_tracker
 
 target_link_libraries(people_tracking_filter ${catkin_LIBRARIES} ${Boost_LIBRARIES} ${BFL_LIBRARIES})
 
+set_target_properties(people_tracking_filter PROPERTIES COMPILE_OPTIONS "-std=c++11")
+
+set_target_properties(people_tracker PROPERTIES COMPILE_OPTIONS "-std=c++11")
+
 install(TARGETS ${PROJECT_NAME}
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
