@@ -1,0 +1,9 @@
+Header          header
+string          name
+string          object_id
+geometry_msgs/Point pos
+geometry_msgs/Point leg1_pos
+geometry_msgs/Point leg2_pos
+float64         reliability
+float64[9] 	covariance
+byte            initialization

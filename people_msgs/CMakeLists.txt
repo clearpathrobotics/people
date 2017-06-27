@@ -34,6 +34,7 @@ add_message_files(
    PersonStamped.msg
    PositionMeasurementArray.msg
    PositionMeasurement.msg
+   PersonPositionMeasurement.msg
 )
 #uncomment if you have defined services
 #add_service_files(

@@ -69,9 +69,9 @@ using namespace MatrixWrapper;
 static double no_observation_timeout_s = 0.5;
 static double max_second_leg_age_s     = 2.0;
 static double max_track_jump_m         = 1.0;
-static double max_meas_jump_m          = 0.75; // 1.0
+static double max_meas_jump_m          = 0.75; // 1.0;
 static double leg_pair_separation_m    = 1.0;
-static string fixed_frame              = "odom_combined";
+static string fixed_frame              = "odom";
 
 static double kal_p = 4, kal_q = .002, kal_r = 10;
 static bool use_filter = true;
@@ -244,7 +244,7 @@ public:
 
   int mask_count_;
 
-  CvRTrees forest;
+  cv::Ptr<cv::ml::RTrees> forest;
 
   float connected_thresh_;
 
@@ -286,8 +286,8 @@ public:
   {
     if (g_argc > 1)
     {
-      forest.load(g_argv[1]);
-      feat_count_ = forest.get_active_var_mask()->cols;
+      forest = cv::ml::StatModel::load<cv::ml::RTrees>(g_argv[1]);
+      feat_count_ = forest->getVarCount();
       printf("Loaded forest with %d features: %s\n", feat_count_, g_argv[1]);
     }
     else
@@ -684,7 +684,7 @@ public:
     processor.splitConnected(connected_thresh_);
     processor.removeLessThan(5);
 
-    CvMat* tmp_mat = cvCreateMat(1, feat_count_, CV_32FC1);
+    cv::Mat tmp_mat = cv::Mat(1, feat_count_, CV_32FC1);
 
     // if no measurement matches to a tracker in the last <no_observation_timeout>  seconds: erase tracker
     ros::Time purge = scan->header.stamp + ros::Duration().fromSec(-no_observation_timeout_s);
@@ -725,9 +725,9 @@ public:
       vector<float> f = calcLegFeatures(*i, *scan);
 
       for (int k = 0; k < feat_count_; k++)
-        tmp_mat->data.fl[k] = (float)(f[k]);
+        tmp_mat.data[k] = (float)(f[k]);
 
-      float probability = forest.predict_prob(tmp_mat);
+      float probability = 0.5 - forest->predict(tmp_mat, cv::noArray(), cv::ml::RTrees::PREDICT_SUM) / forest->getRoots().size();
       Stamped<Point> loc((*i)->center(), scan->header.stamp, scan->header.frame_id);
       try
       {
@@ -841,8 +841,6 @@ public:
       }
     }
 
-    cvReleaseMat(&tmp_mat);
-    tmp_mat = 0;
     if (!use_seeds_)
       pairLegs();
 

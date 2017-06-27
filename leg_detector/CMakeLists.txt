@@ -54,10 +54,30 @@ add_dependencies(leg_detector people_msgs_gencpp ${${PROJECT_NAME}_EXPORTED_TARG
 target_link_libraries(leg_detector
    ${catkin_LIBRARIES} ${BFL_LIBRARIES} ${BULLET_LIBRARIES}
 )
+set_target_properties(leg_detector PROPERTIES COMPILE_OPTIONS "-std=c++11")
+
+## Declare a cpp library
+add_library(leg_detector_lib 
+            src/laser_processor.cpp
+            src/leg_detector_lib.cpp 
+            src/calc_leg_features.cpp
+            src/saved_feature.cpp)
+
+## Add cmake target dependencies of the executable/library
+add_dependencies(leg_detector_lib people_msgs_gencpp ${${PROJECT_NAME}_EXPORTED_TARGETS})
+
+## Specify libraries to link a library or executable target against
+target_link_libraries(leg_detector_lib
+   ${catkin_LIBRARIES} ${BFL_LIBRARIES} ${BULLET_LIBRARIES}
+)
+set_target_properties(leg_detector_lib PROPERTIES COMPILE_OPTIONS "-std=c++11")
 
 install(TARGETS
     leg_detector
-    DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+    leg_detector_lib
+    ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+    LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+    RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
 install(FILES config/trained_leg_detector.yaml
@@ -66,4 +86,10 @@ install(FILES config/trained_leg_detector.yaml
 
 install(DIRECTORY launch/
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch
+)
+
+## Mark cpp header files for installation
+install(DIRECTORY include/${PROJECT_NAME}/
+  DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+  FILES_MATCHING PATTERN "*.h"
 )
