@@ -39,6 +39,7 @@ include_directories(
 )
 
 catkin_package(INCLUDE_DIRS include
+  LIBRARIES leg_detector_lib
   CATKIN_DEPENDS people_msgs sensor_msgs std_msgs geometry_msgs visualization_msgs)
 
 ## Declare a cpp executable
