@@ -6,17 +6,17 @@
     next_p_id_(0),
     no_observation_timeout_s_(0.5),
     max_second_leg_age_s_(2.0),
-    max_track_jump_m_(1.0),
-    max_meas_jump_m_(1.0),
-    leg_pair_separation_m_(1.0),
+    max_track_jump_m_(3.0),
+    max_meas_jump_m_(3.0),
+    leg_pair_separation_m_(2.0),
     fixed_frame_("odom"),
     kal_p_(4),
     kal_q_(0.002),
     kal_r_(10),
     use_filter_(true),
-    connected_thresh_(0.06),
+    connected_thresh_(0.1),
     min_points_per_group(5),
-    leg_reliability_limit_(0.7)
+    leg_reliability_limit_(0.4)
   {
     forest = cv::ml::StatModel::load<cv::ml::RTrees>(model_path);
     feat_count_ = forest->getVarCount();
